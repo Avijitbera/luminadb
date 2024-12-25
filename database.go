@@ -46,3 +46,25 @@ func (db *Database) Set(username, key, value string, ttl time.Duration) {
 	}
 
 }
+
+func (db *Database) Get(username, key string) (string, bool) {
+	db.mu.RLock()
+	defer db.mu.RUnlock()
+
+	if exireTime, exists := db.expiration[username][key]; exists && exireTime.Before(time.Now()) {
+		return "", false
+	}
+	value, exists := db.data[username][key]
+	return value, exists
+}
+
+func (db *Database) Delete(username, key string) bool {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+	if _, exists := db.data[username][key]; exists {
+		delete(db.data[username], key)
+		delete(db.expiration[username], key)
+		return true
+	}
+	return false
+}
