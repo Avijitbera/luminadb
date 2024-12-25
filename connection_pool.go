@@ -15,3 +15,16 @@ func NewConnectionPool(workers int) *ConnectionPool {
 		workers: workers,
 	}
 }
+func (p *ConnectionPool) AddConnection(conn net.Conn) {
+	p.jobs <- conn
+}
+
+func (p *ConnectionPool) Start(db *Database) {
+	for i := 0; i < p.workers; i++ {
+		go p.worker(db)
+	}
+}
+
+func (p *ConnectionPool) worker(db *Database) {
+
+}
