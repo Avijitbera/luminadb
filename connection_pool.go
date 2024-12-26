@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"net"
 	"strconv"
 	"strings"
@@ -64,6 +65,7 @@ func handleConnection(conn net.Conn, db *Database) {
 		}
 		switch strings.ToUpper(command[0]) {
 		case "SET":
+			fmt.Println(command)
 			if len(command) < 3 {
 				conn.Write([]byte("Invalid command\n"))
 

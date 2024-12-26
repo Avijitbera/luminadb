@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
@@ -32,6 +33,8 @@ func (db *Database) AddUser(username, password string) {
 func (db *Database) Authenticate(username, password string) bool {
 	db.mu.RLock()
 	defer db.mu.RUnlock()
+	fmt.Println(db.users)
+	fmt.Println(username, password)
 	storedPassword, exists := db.users[username]
 	return exists && storedPassword == password
 }

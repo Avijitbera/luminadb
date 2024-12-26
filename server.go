@@ -32,4 +32,5 @@ func StartServer(address, certFile, keyFile string, db *Database, poolSize int) 
 		}
 		pool.AddConnection(conn)
 	}
+
 }
