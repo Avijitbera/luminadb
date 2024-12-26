@@ -5,10 +5,10 @@ import (
 	"log"
 )
 
-func StartServer(address, certFile, keyFile string, db *Database) {
+func StartServer(address, certFile, keyFile string, db *Database, poolSize int) error {
 	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 	config := &tls.Config{
 		Certificates: []tls.Certificate{cert},
@@ -16,12 +16,12 @@ func StartServer(address, certFile, keyFile string, db *Database) {
 
 	listener, err := tls.Listen("tcp", address, config)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	defer listener.Close()
 
-	pool := NewConnectionPool(10)
+	pool := NewConnectionPool(poolSize)
 	pool.Start(db)
 	log.Printf("Server listening on %s with TLS", address)
 	for {
@@ -32,5 +32,4 @@ func StartServer(address, certFile, keyFile string, db *Database) {
 		}
 		pool.AddConnection(conn)
 	}
-
 }

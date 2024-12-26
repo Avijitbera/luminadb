@@ -13,11 +13,12 @@ type Database struct {
 }
 
 func NewDatabase() *Database {
-	return &Database{
+	db := &Database{
 		users:      make(map[string]string),
 		data:       make(map[string]map[string]string),
 		expiration: make(map[string]map[string]time.Time),
 	}
+	return db
 }
 
 func (db *Database) AddUser(username, password string) {

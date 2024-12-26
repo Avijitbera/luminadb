@@ -31,7 +31,7 @@ func (p *ConnectionPool) Start(db *Database) {
 
 func (p *ConnectionPool) worker(db *Database) {
 	for conn := range p.jobs {
-
+		handleConnection(conn, db)
 	}
 }
 
@@ -91,6 +91,22 @@ func handleConnection(conn net.Conn, db *Database) {
 					conn.Write([]byte("Key not found\n"))
 				}
 			}
+		case "DEL":
+			if len(command) != 2 {
+				conn.Write([]byte("Invalid command\n"))
+			} else {
+				key := command[1]
+				if db.Delete(username, key) {
+					conn.Write([]byte("OK\n"))
+				} else {
+					conn.Write([]byte("Key not found\n"))
+				}
+			}
+		case "EXIT":
+			conn.Write([]byte("Goodbye\n"))
+			return
+		default:
+			conn.Write([]byte("Invalid command\n"))
 		}
 	}
 }
