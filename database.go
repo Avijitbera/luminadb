@@ -68,3 +68,17 @@ func (db *Database) Delete(username, key string) bool {
 	}
 	return false
 }
+
+func (db *Database) CleanupExpiredKeys() {
+	db.mu.Lock()
+	defer db.mu.Unlock()
+	now := time.Now()
+	for user, keys := range db.expiration {
+		for key, expireTime := range keys {
+			if now.After(expireTime) {
+				delete(db.data[user], key)
+				delete(db.expiration[user], key)
+			}
+		}
+	}
+}
