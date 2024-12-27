@@ -36,6 +36,20 @@ func StartREPLClient(serverAddress, certFile string) {
 			log.Println("Exiting...")
 			break
 		}
+
+		_, err = conn.Write([]byte(input + "\n"))
+		if err != nil {
+			log.Println("Error sending command:", err)
+			continue
+		}
+
+		response, err := bufio.NewReader(conn).ReadString('\n')
+		if err != nil {
+			log.Println("Error reading response:", err)
+			continue
+		}
+
+		fmt.Println(strings.TrimSpace(response))
 	}
 
 }
